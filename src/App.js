@@ -1,11 +1,13 @@
 import styled from 'styled-components'
+import Game from './components/Game';
 import Home from './components/Home';
 import wallpaper from './gamewallpaper.jpg'
 
 function App() {
   return (
     <AppContainer>
-      <Home/>
+      {/* <Home/> */}
+      <Game/>
     </AppContainer>
   );
 }
