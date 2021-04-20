@@ -4,29 +4,38 @@ import GameHeader from './GameHeader'
 import useWindowDimensions from '../utils/WindowDimensions'
 import useKeypress from 'react-use-keypress';
 import Plane from './Plane'
+import Objects from './Objects';
+import ObjectRow from './ObjectRow';
 
 function Game() {
     // dimensions
     const {height, width} = useWindowDimensions()
-    const midX = (width/2)-width/50;
+    const numOfGrids = 25;
+    const midX = Math.floor(numOfGrids/2)*(width/numOfGrids);
     const [currentPlanePosX, setCurrentPlanePosX] = React.useState(midX);
 
     // keypress
     useKeypress(['ArrowLeft', 'ArrowRight'], (event) => {
         if (event.key === 'ArrowLeft') {
-            if((currentPlanePosX-width/50)>-width/50){
-                setCurrentPlanePosX(i=>i-width/50);
+            if((currentPlanePosX-width/(numOfGrids)).toFixed(0)>=0){
+                setCurrentPlanePosX(i=>i-width/(numOfGrids));
             }
         } else if(event.key === 'ArrowRight'){
-            if((currentPlanePosX+width/50)<width-width/25){
-                setCurrentPlanePosX(i=>i+width/50);
+            if((currentPlanePosX+width/(numOfGrids)).toFixed(0)<=width-width/(2*numOfGrids)){
+                setCurrentPlanePosX(i=>i+width/(numOfGrids));
             }
         }
     });
     return (
         <GameContainer>
             <GameHeader/>
-            <Plane planeWidth={width/25} planePosX={currentPlanePosX} planePosY={0}/>
+            <ObjectRow rowPosY={15*width/numOfGrids} numOfGrids={numOfGrids} screenWidth={width}/>
+            <ObjectRow rowPosY={12*width/numOfGrids} numOfGrids={numOfGrids} screenWidth={width}/>
+            <ObjectRow rowPosY={9*width/numOfGrids} numOfGrids={numOfGrids} screenWidth={width}/>
+            <ObjectRow rowPosY={6*width/numOfGrids} numOfGrids={numOfGrids} screenWidth={width}/>
+            <ObjectRow rowPosY={3*width/numOfGrids} numOfGrids={numOfGrids} screenWidth={width}/>
+            <ObjectRow rowPosY={0*width/numOfGrids} numOfGrids={numOfGrids} screenWidth={width}/>
+            <Plane planeWidth={width/numOfGrids} planePosX={currentPlanePosX} planePosY={0}/>
         </GameContainer>
     )
 }
