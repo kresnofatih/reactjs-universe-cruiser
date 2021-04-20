@@ -5,7 +5,6 @@ function GameHeader({points}) {
     return (
         <GameHeaderComponent>
             <h2>universe cruiser</h2>
-            <label>music</label>
             <h2>score<h3>{points}</h3></h2>
         </GameHeaderComponent>
     )
@@ -19,6 +18,9 @@ const GameHeaderComponent = styled.div`
     justify-content: space-between;
     align-items: center;
     background-color: var(--game-dgray);
+    position: absolute;
+    z-index: 100;
+    left: 0;
 
     > h2 {
         padding-left: 20px;
