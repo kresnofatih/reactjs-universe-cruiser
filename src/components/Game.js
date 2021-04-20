@@ -11,6 +11,8 @@ function Game() {
     // dimensions
     const {height, width} = useWindowDimensions()
     const numOfGrids = 25;
+    const gridDepthDistance = 3;
+    const gridDepth = Math.floor((height-100)/(width/numOfGrids));
     const midX = Math.floor(numOfGrids/2)*(width/numOfGrids);
     const [currentPlanePosX, setCurrentPlanePosX] = React.useState(midX);
 
@@ -31,63 +33,35 @@ function Game() {
     const [crash, setCrash] = React.useState(false);
     const [points, setPoints] = React.useState(0);
 
+    // time controls
+    const [counter, setCounter] = React.useState(0);
+    const id = React.useRef(null);
+    const clearTimer = ()=>{
+        window.clearInterval(id.current)
+    }
+
+    React.useEffect(()=>{
+        id.current= window.setInterval(()=>{
+            setCounter(time=>time+1);
+        }, 1000);
+
+        return ()=>clearTimer();
+    },[]);
+
     return (
         <GameContainer>
-            <GameHeader points={points}/>
-            <ObjectRow
-                rowPosY={15*width/numOfGrids}
-                numOfGrids={numOfGrids}
-                screenWidth={width}
-                planePosX={currentPlanePosX}
-                planePosY={0}
-                triggerCrash={()=>setCrash(i=>!i)}
-                triggerGainPoint={()=>setPoints(i=>i+1)}
-                />
-            <ObjectRow
-                rowPosY={12*width/numOfGrids}
-                numOfGrids={numOfGrids}
-                screenWidth={width}
-                planePosX={currentPlanePosX}
-                planePosY={0}
-                triggerCrash={()=>setCrash(i=>!i)}
-                triggerGainPoint={()=>setPoints(i=>i+1)}
-                />
-            <ObjectRow
-                rowPosY={9*width/numOfGrids}
-                numOfGrids={numOfGrids}
-                screenWidth={width}
-                planePosX={currentPlanePosX}
-                planePosY={0}
-                triggerCrash={()=>setCrash(i=>!i)}
-                triggerGainPoint={()=>setPoints(i=>i+1)}
-                />
-            <ObjectRow
-                rowPosY={6*width/numOfGrids}
-                numOfGrids={numOfGrids}
-                screenWidth={width}
-                planePosX={currentPlanePosX}
-                triggerCrash={()=>setCrash(i=>!i)}
-                triggerGainPoint={()=>setPoints(i=>i+1)}
-                planePosY={0}
-                />
-            <ObjectRow
-                rowPosY={3*width/numOfGrids}
-                numOfGrids={numOfGrids}
-                screenWidth={width}
-                planePosX={currentPlanePosX}
-                triggerCrash={()=>setCrash(i=>!i)}
-                triggerGainPoint={()=>setPoints(i=>i+1)}
-                planePosY={0}
-                />
-            <ObjectRow
-                rowPosY={0*width/numOfGrids}
-                numOfGrids={numOfGrids}
-                screenWidth={width}
-                planePosX={currentPlanePosX}
-                triggerCrash={()=>setCrash(i=>!i)}
-                triggerGainPoint={()=>setPoints(i=>i+1)}
-                planePosY={0}
-            />
+            <GameHeader points={points+" "+counter}/>
+            {[...Array(Math.floor(numOfGrids/gridDepthDistance)).keys()].map(num=>(
+                <ObjectRow
+                    rowPosY={(gridDepth-num*gridDepthDistance-(counter)%(gridDepth+1))*width/numOfGrids}
+                    numOfGrids={numOfGrids}
+                    screenWidth={width}
+                    planePosX={currentPlanePosX}
+                    planePosY={0}
+                    triggerCrash={()=>setCrash(true)}
+                    triggerGainPoint={()=>setPoints(i=>i+1)}
+                    />
+            ))}
             <Plane planeWidth={width/numOfGrids} planePosX={currentPlanePosX} planePosY={0}/>
         </GameContainer>
     )
