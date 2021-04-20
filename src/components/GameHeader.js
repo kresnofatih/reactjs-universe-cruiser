@@ -5,6 +5,7 @@ function GameHeader({points}) {
     return (
         <GameHeaderComponent>
             <h2>universe cruiser</h2>
+            <label>music</label>
             <h2>score<h3>{points}</h3></h2>
         </GameHeaderComponent>
     )
@@ -35,5 +36,16 @@ const GameHeaderComponent = styled.div`
             font-size: 25px;
             margin-left: 10px;
         }
+    }
+
+    > label {
+        padding-left: 20px;
+        padding-right: 20px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-family: 'Poppins', sans-serif;
+        font-size: 30px;
+        color: var(--game-lred);
     }
 `;
