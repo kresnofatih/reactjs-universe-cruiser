@@ -2,21 +2,50 @@ import React from 'react'
 import styled from 'styled-components'
 import Objects from './Objects'
 
-function ObjectRow({rowPosY, numOfGrids, screenWidth}) {
+function ObjectRow({
+    rowPosY,
+    numOfGrids,
+    screenWidth,
+    planePosX,
+    planePosY,
+    triggerCrash,
+    triggerGainPoint
+}) {
     const [rowData, setRowData] = React.useState([...Array(numOfGrids).keys()].map(num=>{
         if(Math.random()>=0.5){
-            return {state: true, num: num, type: Math.random()>=0.2 ? 'asteroid': 'gem'};
+            return {state: true, posX: num*screenWidth/numOfGrids, type: Math.random()>=0.2 ? 'asteroid': 'gem'};
         } else {
-            return {state: false, num: num};
+            return {state: false, posX: num*screenWidth/numOfGrids};
         }
     }))
+
+    React.useEffect(()=>{
+        // see if plane collides with objects
+        if(rowPosY===planePosY){
+            setRowData(
+                rowData.map((object)=>{
+                    if(Math.abs(object.posX.toFixed(2)-planePosX.toFixed(2))<=screenWidth/(2*numOfGrids)){
+                        if(object.type==='gem'){
+                            triggerGainPoint();
+                            return {state: false, posX: object.posX}
+                        } else {
+                            triggerCrash();
+                            return object;
+                        }
+                    } else {
+                        return object;
+                    }
+                })
+            );
+        }
+    }, [planePosX])
     return (
         <ObjectRowContainer>
             {rowData.map(data=>{
                 if(data.state){
                     return (
                         <Objects
-                            objectPosX={data.num*screenWidth/numOfGrids}
+                            objectPosX={data.posX}
                             objectPosY={rowPosY}
                             objectType={data.type}
                             objectWidth={screenWidth/numOfGrids}
@@ -24,18 +53,6 @@ function ObjectRow({rowPosY, numOfGrids, screenWidth}) {
                     )
                 }
             })}
-            {/* {[...Array(numOfGrids).keys()].map(num=>{
-                if(Math.random()>=0.5){
-                    return (
-                        <Objects
-                            objectPosX={num*screenWidth/numOfGrids}
-                            objectPosY={rowPosY}
-                            objectType={Math.random()>=0.1 ? 'asteroid': 'gem'}
-                            objectWidth={screenWidth/numOfGrids}
-                        />
-                    )
-                }
-            })} */}
         </ObjectRowContainer>
     )
 }

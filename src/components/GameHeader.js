@@ -1,11 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 
-function GameHeader() {
+function GameHeader({points}) {
     return (
         <GameHeaderComponent>
             <h2>universe cruiser</h2>
-            <h2>score<h3>29302933</h3></h2>
+            <h2>score<h3>{points}</h3></h2>
         </GameHeaderComponent>
     )
 }
