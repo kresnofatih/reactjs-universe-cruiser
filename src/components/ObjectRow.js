@@ -29,8 +29,10 @@ function ObjectRow({
                         if(object.type==='gem'){
                             triggerGainPoint();
                             return {state: false, posX: object.posX}
-                        } else {
+                        } else if(object.type==='asteroid'){
                             triggerCrash();
+                            return object;
+                        } else {
                             return object;
                         }
                     } else {

@@ -8,8 +8,9 @@ import ObjectRow from './ObjectRow';
 import sayurisong from '../SayuriAoibashi.mp3'
 import ReactHowler from 'react-howler'
 import PointSound from '../pointsound.mp3'
+import CrashSound from '../CrashSound.mp3'
 
-function Game() {
+function Game({setPage, setHighScore}) {
     // dimensions
     const {height, width} = useWindowDimensions()
     const numOfGrids = 25;
@@ -33,6 +34,7 @@ function Game() {
 
     // triggers
     const [playPointSound, setPlayPointSound] = React.useState(false);
+    const [playCrashSound, setPlayCrashSound] = React.useState(false);
     const [crash, setCrash] = React.useState(false);
     const [points, setPoints] = React.useState(0);
 
@@ -44,12 +46,17 @@ function Game() {
     }
     const [speed, setSpeed] = React.useState(1000);
     const pointSoundRef = React.useRef(null);
-    // time-speed
+    const crashSoundRef = React.useRef(null);
+    // time-speed play sound
     React.useEffect(()=>{
-        setPlayPointSound(true);
+        if(counter!==0){
+            setPlayPointSound(true);
+        }
         const pointSoundEvent = setInterval(()=>{
-            setPlayPointSound(false);
-            pointSoundRef.current.seek(0);
+            if(counter!==0){
+                setPlayPointSound(false);
+                pointSoundRef.current.seek(0);
+            }
         }, 200);
         setSpeed(i=>i-10);
         // setPlayPointSound(false);
@@ -64,6 +71,23 @@ function Game() {
 
         return ()=>clearTimer();
     },[speed]);
+
+    // crash listener
+    React.useEffect(()=>{
+        if(crash===true){
+            setPlayCrashSound(true);
+        };
+        const crashSoundEvent = setInterval(()=>{
+            if(crash===true){
+                setPlayCrashSound(false);
+                crashSoundRef.current.seek(0);
+                setHighScore(points*100);
+                setPage('home');
+            }
+        }, 200);
+
+        return ()=>clearInterval(crashSoundEvent);
+    },[crash])
 
     const [playingStatus, setPlayingStatus] = React.useState(true);
 
@@ -81,7 +105,21 @@ function Game() {
                 playing={playPointSound}
                 volume={0.5}
             />
-            <GameHeader points={points+" "+playPointSound} playingStatus={playingStatus} setPlayingStatus={setPlayingStatus}/>
+            <ReactHowler
+                ref={crashSoundRef}
+                src={CrashSound}
+                playing={playCrashSound}
+                volume={0.5}
+            />
+            <GameHeader
+                points={points*100}
+                playingStatus={playingStatus}
+                setPlayingStatus={setPlayingStatus}
+                setPageToHome={()=>{
+                    setHighScore(-1);
+                    setPage('home');
+                }}
+            />
             {[...Array(Math.floor(gridDepth/gridDepthDistance)).keys()].map(num=>(
                 <ObjectRow
                     key={num}

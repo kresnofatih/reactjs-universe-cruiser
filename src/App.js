@@ -2,12 +2,19 @@ import styled from 'styled-components'
 import Game from './components/Game';
 import Home from './components/Home';
 import wallpaper from './gamewallpaper.jpg'
+import React from 'react';
 
 function App() {
+  const [page, setPage] = React.useState('home');
+  const [highScore, setHighScore] = React.useState(-1);
   return (
     <AppContainer>
-      {/* <Home/> */}
-      <Game/>
+      {page==='home' &&
+        <Home setPage={setPage} highScore={highScore}/>
+      }
+      {page==='play' &&
+        <Game setPage={setPage} setHighScore={setHighScore}/>
+      }
     </AppContainer>
   );
 }

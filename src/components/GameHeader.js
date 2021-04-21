@@ -3,13 +3,13 @@ import styled from 'styled-components'
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import MusicOffIcon from '@material-ui/icons/MusicOff';
 
-function GameHeader({points, playingStatus, setPlayingStatus}) {
+function GameHeader({points, playingStatus, setPlayingStatus, setPageToHome}) {
     const togglePlayer = ()=>{
         setPlayingStatus(i=>!i);
     }
     return (
         <GameHeaderComponent>
-            <h2>universe cruiser</h2>
+            <label onClick={setPageToHome}><h2>universe cruiser</h2></label>
             <h2>score<h3>{points}</h3></h2>
             <label onClick={togglePlayer}>
                 <MusicNoteIcon style={{color: '#ff0077', display: !playingStatus && 'none'}}/>
@@ -58,5 +58,9 @@ const GameHeaderComponent = styled.div`
         font-family: 'Poppins', sans-serif;
         font-size: 30px;
         color: var(--game-lred);
+
+        :hover {
+            cursor: pointer;
+        }
     }
 `;
