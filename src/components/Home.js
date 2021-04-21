@@ -7,7 +7,7 @@ function Home({setPage, highScore}) {
         <HomeContainer>
             <img src={logo} alt=""/>
             <p style={{display: highScore===-1 && 'none'}}>{'Your Score: '+highScore}</p>
-            <label onClick={()=>setPage('play')}>play</label>
+            <label onClick={()=>setPage('play')}>{highScore===-1 ? 'play': 'play again'}</label>
             {/* <label>about</label> */}
         </HomeContainer>
     )

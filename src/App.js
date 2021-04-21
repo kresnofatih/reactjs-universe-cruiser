@@ -3,12 +3,16 @@ import Game from './components/Game';
 import Home from './components/Home';
 import wallpaper from './gamewallpaper.jpg'
 import React from 'react';
+import {Helmet} from 'react-helmet';
 
 function App() {
   const [page, setPage] = React.useState('home');
   const [highScore, setHighScore] = React.useState(-1);
   return (
     <AppContainer>
+      <Helmet>
+        <title>Reactjs-Universe-Cruiser</title>
+      </Helmet>
       {page==='home' &&
         <Home setPage={setPage} highScore={highScore}/>
       }
