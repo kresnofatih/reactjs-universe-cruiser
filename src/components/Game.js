@@ -6,8 +6,8 @@ import useKeypress from 'react-use-keypress';
 import Plane from './Plane'
 import ObjectRow from './ObjectRow';
 import sayurisong from '../SayuriAoibashi.mp3'
-import {Howl, Howler} from 'howler';
-
+import ReactHowler from 'react-howler'
+import PointSound from '../pointsound.mp3'
 
 function Game() {
     // dimensions
@@ -32,6 +32,7 @@ function Game() {
     });
 
     // triggers
+    const [playPointSound, setPlayPointSound] = React.useState(false);
     const [crash, setCrash] = React.useState(false);
     const [points, setPoints] = React.useState(0);
 
@@ -41,33 +42,52 @@ function Game() {
     const clearTimer = ()=>{
         window.clearInterval(id.current)
     }
+    const [speed, setSpeed] = React.useState(1000);
+    const pointSoundRef = React.useRef(null);
+    // time-speed
     React.useEffect(()=>{
-        soundplay(sayurisong);
+        setPlayPointSound(true);
+        const pointSoundEvent = setInterval(()=>{
+            setPlayPointSound(false);
+            pointSoundRef.current.seek(0);
+        }, 200);
+        setSpeed(i=>i-10);
+        // setPlayPointSound(false);
+
+        return ()=>clearInterval(pointSoundEvent);
+    }, [points]);
+    // time-counter
+    React.useEffect(()=>{
         id.current= window.setInterval(()=>{
             setCounter(time=>time+1);
-        }, 1000);
+        }, speed);
 
         return ()=>clearTimer();
-    },[]);
+    },[speed]);
 
-    // sound controls
-    Howler.volume(0.8);
-    const soundplay = (src)=>{
-        const sound = new Howl({
-            src
-        });
-        sound.play();
-    }
+    const [playingStatus, setPlayingStatus] = React.useState(true);
 
     return (
         <GameContainer>
-            <GameHeader points={points}/>
-            {[...Array(Math.floor(numOfGrids/gridDepthDistance)).keys()].map(num=>(
+            <ReactHowler
+                src={sayurisong}
+                playing={playingStatus}
+                loop={true}
+                volume={0.5}
+            />
+            <ReactHowler
+                ref={pointSoundRef}
+                src={PointSound}
+                playing={playPointSound}
+                volume={0.5}
+            />
+            <GameHeader points={points+" "+playPointSound} playingStatus={playingStatus} setPlayingStatus={setPlayingStatus}/>
+            {[...Array(Math.floor(gridDepth/gridDepthDistance)).keys()].map(num=>(
                 <ObjectRow
                     key={num}
-                    rowPosY={gridDepth-num*gridDepthDistance-(counter%17)<-1 ? 
-                        (32-num*gridDepthDistance-(counter%17))*width/numOfGrids :
-                        (gridDepth-num*gridDepthDistance-(counter%17))*width/numOfGrids
+                    rowPosY={gridDepth-num*gridDepthDistance-(counter%(gridDepth+2))<-1 ? 
+                        ((4+(gridDepth-1)*2)-num*gridDepthDistance-(counter%(gridDepth+2)))*width/numOfGrids :
+                        (gridDepth-num*gridDepthDistance-(counter%(gridDepth+2)))*width/numOfGrids
                     }
                     numOfGrids={numOfGrids}
                     counter={counter}
